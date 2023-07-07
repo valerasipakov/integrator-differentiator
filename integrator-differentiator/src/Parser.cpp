@@ -29,45 +29,38 @@ double parser::calculate(std::string str)
                 sstr.ignore();
             }
             if (foo[0] == 's' && foo[1] == 'i' && foo[2] == 'n') { //Если прочитанная функция - синус
-                item.type = 's';
-                item.value = 0;
+                changeLeksema(item, 's', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
             if (foo[0] == 'c' && foo[1] == 'o' && foo[2] == 's') { //Если прочитанная функция - косинус
-                item.type = 'c';
-                item.value = 0;
+                changeLeksema(item, 'c', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
             if (foo[0] == 't' && foo[1] == 'a' && foo[2] == 'n') { //Если прочитанная функция - тангенс
-                item.type = 't';
-                item.value = 0;
+                changeLeksema(item, 't', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
             if (foo[0] == 'c' && foo[1] == 't' && foo[2] == 'g') { //Если прочитанная функция - котангенс
-                item.type = 'g';
-                item.value = 0;
+                changeLeksema(item, 'g', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
             if (foo[0] == 'e' && foo[1] == 'x' && foo[2] == 'p') { //Если прочитанная функция - экспонента
-                item.type = 'e';
-                item.value = 0;
+                changeLeksema(item, 'e', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
             if (foo[0] == 'l' && foo[1] == 'o' && foo[2] == 'g') { //Если прочитанная функция - логарифм
-                item.type = 'l';
-                item.value = 0;
+                changeLeksema(item, 'l', 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 continue;
             }
         }
         if (Ch == 'p') { //Если прочитано число Пи
-            item.type = '0';
-            item.value = Pi;
+            changeLeksema(item, '0', Pi);
             Stack_n.push(item); //Число кладется в стек с числами
             flag = 0;
             sstr.ignore();
@@ -75,24 +68,21 @@ double parser::calculate(std::string str)
         }
         if (Ch >= '0' && Ch <= '9' || Ch == '-' && flag == 1) { //Если прочитано число
             sstr >> value;
-            item.type = '0';
-            item.value = value;
+            changeLeksema(item, '0', value);
             Stack_n.push(item); //Число кладется в стек с числами
             flag = 0;
             continue;
         }
         if (Ch == '+' || Ch == '-' && flag == 0 || Ch == '*' || Ch == '/' || Ch == '^') { //Если прочитана операция
             if (Stack_o.size() == 0) { //Если стек с операциями пуст
-                item.type = Ch;
-                item.value = 0;
+                changeLeksema(item, Ch, 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 sstr.ignore();
                 continue;
             }
             if (Stack_o.size() != 0 && getRang(Ch) >
                 getRang(Stack_o.top().type)) { //Если стек с операциями НЕ пуст, но приоритет текущей операции выше верхней в стеке с операциями
-                item.type = Ch;
-                item.value = 0;
+                changeLeksema(item, Ch, 0);
                 Stack_o.push(item); //Операция кладется в стек с операциями
                 sstr.ignore();
                 continue;
@@ -104,8 +94,7 @@ double parser::calculate(std::string str)
             }
         }
         if (Ch == '(') { //Если прочитана открывающаяся скобка
-            item.type = Ch;
-            item.value = 0;
+            changeLeksema(item, Ch, 0);
             Stack_o.push(item); //Операция кладется в стек с операциями
             sstr.ignore();
             flag = 1; // для того, чтобы отличить 4*(-5) от 4-5
@@ -159,7 +148,10 @@ int parser::getRang(char ch)
     else return 0;
 }
 
-
+void parser::changeLeksema(Leksema& leksema, char type, double value) {
+    leksema.type = type;
+    leksema.value = value;
+}
 
 void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, Leksema& item)
 {
@@ -171,8 +163,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
         b = Stack_n.top().value;
         Stack_n.pop();
         c = a + b;
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -181,8 +172,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
         b = Stack_n.top().value;
         Stack_n.pop();
         c = b - a;
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -191,8 +181,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
         b = Stack_n.top().value;
         Stack_n.pop();
         c = pow(b, a);
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -201,8 +190,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
         b = Stack_n.top().value;
         Stack_n.pop();
         c = a * b;
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -213,8 +201,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
 
             Stack_n.pop();
             c = (b / a);
-            item.type = '0';
-            item.value = c;
+            changeLeksema(item, '0', c);
             Stack_n.push(item); //Результат операции кладется обратно в стек с числами
             Stack_o.pop();
             break;
@@ -225,16 +212,14 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
 
     case 's':
         c = Sin(a);
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
 
     case 'c':
         c = Cos(a);
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -243,8 +228,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
 
         if (Cos(a) != 0) {
             c = tan(a);
-            item.type = '0';
-            item.value = c;
+            changeLeksema(item, '0', c);
             Stack_n.push(item); //Результат операции кладется обратно в стек с числами
             Stack_o.pop();
             break;
@@ -256,8 +240,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
     case 'g':
         if (Sin(a) != 0) {
             c = Ctg(a);
-            item.type = '0';
-            item.value = c;
+            changeLeksema(item, '0', c);
             Stack_n.push(item); //Результат операции кладется обратно в стек с числами
             Stack_o.pop();
             break;
@@ -270,8 +253,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
 
     case 'e':
         c = exp(a);
-        item.type = '0';
-        item.value = c;
+        changeLeksema(item, '0', c);
         Stack_n.push(item); //Результат операции кладется обратно в стек с числами
         Stack_o.pop();
         break;
@@ -279,8 +261,7 @@ void parser::Maths(std::stack<Leksema>& Stack_n, std::stack<Leksema>& Stack_o, L
     case 'l':
         if (a > 0) {
             c = log(a);
-            item.type = '0';
-            item.value = c;
+            changeLeksema(item, '0', c);
             Stack_n.push(item); //Результат операции кладется обратно в стек с числами
             Stack_o.pop();
             break;

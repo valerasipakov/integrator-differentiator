@@ -23,6 +23,7 @@ private:
 	double Ctg(double x);
 	int getRang(char ch);
 	void Maths(std::stack <Leksema>& Stack_n, std::stack <Leksema>& Stack_o, Leksema& item);
+	void changeLeksema(Leksema& leksema, char type, double value);
 
 
 
