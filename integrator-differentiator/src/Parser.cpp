@@ -110,7 +110,7 @@ double parser::calculate(std::string str)
             continue;
         }
         else { //Если прочитан какой-то странный символ
-            std::cout << "\nНеверно введено выражение!\n";
+            std::cout << "\nExpression entered incorrectly\n";
             system("pause");
             return 0;
         }
